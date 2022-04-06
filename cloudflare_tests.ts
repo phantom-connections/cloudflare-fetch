@@ -14,6 +14,10 @@ export function isCloudflareHold(response: Response | HTTPResponse | null): bool
     return false;
 }
 
+export function hasCloudflareChallengePlatform(body: string) {
+    return body.includes('/cdn-cgi/challenge-platform');
+}
+
 export function isCloudflareJSChallenge(body: string) {
     return body.includes('managed_checking_msg');
 }

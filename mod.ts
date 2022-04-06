@@ -1,47 +1,80 @@
-import { Cookie, CookieJar, wrapFetch } from 'https://deno.land/x/another_cookiejar@v4.0.2/mod.ts';
-import { fillCookiesJar } from "./fillCookiesJar.ts";
-import { isCloudflareHold } from "./cloudflare_tests.ts";
+import puppeteer from "https://deno.land/x/puppeteer_plus@0.12.0/mod.ts";
+import type { HTTPResponse, Browser, Protocol } from "https://deno.land/x/puppeteer_plus@0.12.0/mod.ts";
+import * as cloudflareTests from "./cloudflare_tests.ts";
 
 export class CloudflareFetcher {
     readonly useragent: string;
-    readonly cookieJar: CookieJar;
-    private readonly wfetch;
+    private browser: Browser | null = null
+    private cookieJar: Protocol.Network.Cookie[] | null = null;
+    private lastPage: string | undefined = undefined;
 
     constructor(useragent: string) {
         this.useragent = useragent;
-        // you can also pass your own cookiejar to wrapFetch to save/load your cookies
-        this.cookieJar = new CookieJar();
-        // Now use this fetch and any cookie that is set will be sent with your next requests automatically
-        this.wfetch = wrapFetch({ "cookieJar": this.cookieJar });
     }
 
-    private static isCloudflareHold(response: Response): boolean {
-        return isCloudflareHold(response);
+    async startBrowser() {
+        this.browser = await puppeteer.launch();
     }
 
-    private async handleNotOK(response: Response, url: string, options: RequestInit) {
-        if (CloudflareFetcher.isCloudflareHold(response)){
-            response.body?.cancel();
-            console.log(this.cookieJar.cookies);
-            await fillCookiesJar(url, this.useragent, this.cookieJar);
-            console.log(this.cookieJar.cookies);
-            return this.wfetch(url, options);
-        }
-        console.error("Unknown error in handleNotOK.");
-        return response;
-    }
-
-    private handleResponse(response: Response, url: string, options: RequestInit) {
-        return response;
+    async closeBrowser() {
+        const browser = this.browser;
+        this.browser = null;
+        await browser?.close();
     }
 
     async fetch(url: string, options?: RequestInit) {
+        if(!this.browser){
+            throw new Error("No browser yet!");
+        }
         const fullOptions = { ...options };
         fullOptions.headers = { ...fullOptions.headers, "User-Agent": this.useragent};
-        let response = await this.wfetch(url, fullOptions);
-        if(!response.ok){
-            response = await this.handleNotOK(response, url, fullOptions)
+        const page = await this.browser.newPage();
+        let content = "";
+        let status = -1;
+        try {
+
+            if(this.cookieJar){
+                page.setCookie(...this.cookieJar);
+            }
+            page.setUserAgent(this.useragent);
+
+            let response: HTTPResponse | null = await page.goto(url, {
+                timeout: 45000,
+                waitUntil: 'domcontentloaded',
+                referer: this.lastPage
+            });
+
+            let count = 1;
+            content = await page.content();
+
+            while (cloudflareTests.hasCloudflareChallengePlatform(content) ||cloudflareTests.isCloudflareJSChallenge(content) || cloudflareTests.isCloudflareHold(response)) {
+                const res = page.waitForNavigation({
+                    timeout: 10000,
+                    waitUntil: 'domcontentloaded'
+                });
+                if (cloudflareTests.hasCloudflareChallengePlatform(content) || cloudflareTests.isCloudflareJSChallenge(content) || cloudflareTests.isCloudflareHold(response)) {
+                    page.click(".bubbles", {delay: (Math.random() * Math.pow(10, 3))}).catch(()=>{})
+                }
+                response = await res;
+                content = await page.content();
+                if (count++ == 100) {
+                    throw new Error('timeout on just a moment');
+                }
+                console.log(response?.status(), response?.statusText(), await page.title())
+            }
+            if (cloudflareTests.isCloudflareCaptchaChallenge(content)) {
+                console.error("Not Yet Implemented.")
+                throw new Error("Hit actual captcha.")
+            }
+            status = response?.status() || -1;
+            this.cookieJar = await page.cookies();
+        } finally {
+            this.lastPage = page.url();
+            await page.close();
         }
-        return this.handleResponse(response, url, fullOptions);
+        return {
+            content,
+            status
+        };
     }
 }
