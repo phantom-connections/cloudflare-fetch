@@ -8,6 +8,7 @@ const profileURL = `https://www.fanfiction.net/u/${profile.id}/`;
 const storyID = 11689623;
 const story1 = { id: storyID, name: "Linked in Life and Love" };
 const story1URL = `https://www.fanfiction.net/s/${story1.id}/`;
+const story1URL2 = `https://www.fanfiction.net/s/${story1.id}/1/`;
 const review1URL = `https://www.fanfiction.net/r/${story1.id}/0/1/`;
 
 Deno.test({
@@ -38,6 +39,18 @@ Deno.test({
     const cff = new CloudflareFetcher("CloudflareFetcher-Test-Instance", 7.5);
     await cff.startBrowser();
     const { content, status } = await cff.fetch(story1URL);
+    test.assertStringIncludes(content, `id: ${story1.id}`);
+    test.assertEquals(status, 200);
+    await cff.closeBrowser();
+  },
+});
+
+Deno.test({
+  name: "Download story '11689623' from FF.Net but with chapter in URL",
+  async fn() {
+    const cff = new CloudflareFetcher("CloudflareFetcher-Test-Instance", 7.5);
+    await cff.startBrowser();
+    const { content, status } = await cff.fetch(story1URL2);
     test.assertStringIncludes(content, `id: ${story1.id}`);
     test.assertEquals(status, 200);
     await cff.closeBrowser();

@@ -7,12 +7,10 @@
   "deno.codeLens.referencesAllFunctions": true,
   "deno.codeLens.test": true,
   "deno.codeLens.testArgs": [
-    "--allow-all",
-    "--check"
+    "--allow-all"
   ],
   "deno.testing.args": [
-    "--allow-all",
-    "--check"
+    "--allow-all"
   ],
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "denoland.vscode-deno"
