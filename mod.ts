@@ -7,9 +7,11 @@ export class CloudflareFetcher {
     private browser: Browser | null = null
     private cookieJar: Protocol.Network.Cookie[] | null = null;
     private lastPage: string | undefined = undefined;
+    readonly timeout: number;
 
-    constructor(useragent: string) {
+    constructor(useragent: string, timeout: number = 15) {
         this.useragent = useragent;
+        this.timeout = timeout;
     }
 
     async startBrowser() {
@@ -39,7 +41,7 @@ export class CloudflareFetcher {
             page.setUserAgent(this.useragent);
 
             let response: HTTPResponse | null = await page.goto(url, {
-                timeout: 45000,
+                timeout: this.timeout * 1000,
                 waitUntil: 'domcontentloaded',
                 referer: this.lastPage
             });
@@ -49,7 +51,7 @@ export class CloudflareFetcher {
 
             while (cloudflareTests.hasCloudflareChallengePlatform(content) ||cloudflareTests.isCloudflareJSChallenge(content) || cloudflareTests.isCloudflareHold(response)) {
                 const res = page.waitForNavigation({
-                    timeout: 10000,
+                    timeout: this.timeout * 1000,
                     waitUntil: 'domcontentloaded'
                 });
                 if (cloudflareTests.hasCloudflareChallengePlatform(content) || cloudflareTests.isCloudflareJSChallenge(content) || cloudflareTests.isCloudflareHold(response)) {
@@ -60,7 +62,6 @@ export class CloudflareFetcher {
                 if (count++ == 100) {
                     throw new Error('timeout on just a moment');
                 }
-                console.log(response?.status(), response?.statusText(), await page.title())
             }
             if (cloudflareTests.isCloudflareCaptchaChallenge(content)) {
                 console.error("Not Yet Implemented.")
