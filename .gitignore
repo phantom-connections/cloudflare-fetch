@@ -1,5 +1,3 @@
 cov_profile
-coverage
-cov_profile.lcov
 lcov_cobertura.py
 coverage.xml
