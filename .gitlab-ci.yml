@@ -1,25 +1,13 @@
 image: denoland/deno
 
 stages:
-  - none
+  - test
 
 unit-test-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
-    - deno test -A --unstable --coverage=cov_profile
-    - deno coverage cov_profile --lcov --output=cov_profile.lcov
-    - wget https://raw.github.com/eriwen/lcov-to-cobertura-xml/master/lcov_cobertura/lcov_cobertura.py
-    - python3 ./lcov_cobertura.py ./cov_profile.lcov
-  artifacts:
-    reports:
-      coverage_report:
-        coverage_format: cobertura
-        path: coverage.xml
-
-skipper:
-  stage: none    
-  script:
-    - echo, how does one test pupiteer in a CI?
+#    - deno test -A --unstable --coverage=cov_profile
+#    - deno coverage cov_profile --lcov --output=cov_profile.lcov
     - wget https://raw.github.com/eriwen/lcov-to-cobertura-xml/master/lcov_cobertura/lcov_cobertura.py
     - python3 ./lcov_cobertura.py ./cov_profile.lcov
   artifacts:
