@@ -12,7 +12,7 @@ Code is maintained on [Gitlab](https://gitlab.com/phm-conn/cloudflare-fetch).
 # Usage
 
 ```
-import { CloudflareFetcher } from "./mod.ts";
+import { CloudflareFetcher } from "https://deno.land/x/cloudflare_fetch/mod.ts";
 
 const cff = new CloudflareFetcher("CloudflareFetcher-Test-Instance");
 // Starts a puppeteer instance.
