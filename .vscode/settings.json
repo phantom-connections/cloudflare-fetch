@@ -14,5 +14,7 @@
     "--allow-all"
   ],
   "editor.defaultFormatter": "denoland.vscode-deno",
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "javascript.format.enable": false,
+  "typescript.format.enable": false
 }
