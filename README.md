@@ -25,4 +25,5 @@ await cff.closeBrowser();
 ```
 
 # Prior Work:
+
 Loosely based around https://github.com/JimmyLaurent/cloudflare-scraper

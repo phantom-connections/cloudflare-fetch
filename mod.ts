@@ -72,7 +72,7 @@ export class CloudflareFetcher {
           cloudflareTests.isCloudflareHold(response)
         ) {
           page.click(".bubbles", { delay: (Math.random() * Math.pow(10, 3)) })
-            .catch(() => { });
+            .catch(() => {});
         }
         if (count++ == 100) {
           throw new Error("timeout on just a moment");
