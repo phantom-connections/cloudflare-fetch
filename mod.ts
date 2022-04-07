@@ -64,16 +64,16 @@ export class CloudflareFetcher {
           timeout: this.timeout * 1000,
           waitUntil: "domcontentloaded",
         });
+        response = await res;
+        content = await page.content();
         if (
           cloudflareTests.hasCloudflareChallengePlatform(content) ||
           cloudflareTests.isCloudflareJSChallenge(content) ||
           cloudflareTests.isCloudflareHold(response)
         ) {
           page.click(".bubbles", { delay: (Math.random() * Math.pow(10, 3)) })
-            .catch(() => {});
+            .catch(() => { });
         }
-        response = await res;
-        content = await page.content();
         if (count++ == 100) {
           throw new Error("timeout on just a moment");
         }
