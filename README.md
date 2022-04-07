@@ -11,7 +11,7 @@ Code is maintained on [Gitlab](https://gitlab.com/phm-conn/cloudflare-fetch).
 
 # Usage
 
-```
+```ts
 import { CloudflareFetcher } from "https://deno.land/x/cloudflare_fetch/mod.ts";
 
 const cff = new CloudflareFetcher("CloudflareFetcher-Test-Instance");

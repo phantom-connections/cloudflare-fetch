@@ -9,9 +9,10 @@
   "deno.codeLens.testArgs": [
     "--allow-all"
   ],
+  "deno.suggest.completeFunctionCalls": true,
   "deno.testing.args": [
     "--allow-all"
   ],
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "denoland.vscode-deno"
+  "editor.defaultFormatter": "denoland.vscode-deno",
+  "editor.formatOnSave": true
 }

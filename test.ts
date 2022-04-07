@@ -22,7 +22,7 @@ Deno.test({
 });
 
 Deno.test({
-  name: `Download ${profile.name}'s Profile from FF.Net`,
+  name: `Download WWJDTD's Profile from FF.Net`,
   async fn() {
     const cff = new CloudflareFetcher("CloudflareFetcher-Test-Instance");
     await cff.startBrowser();
