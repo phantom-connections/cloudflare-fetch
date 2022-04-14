@@ -35,6 +35,7 @@ Deno.test({
 
 Deno.test({
   name: "Download story '11689623' from FF.Net",
+  ignore: true,
   async fn() {
     const cff = new CloudflareFetcher("CloudflareFetcher-Test-Instance", 7.5);
     await cff.startBrowser();
@@ -47,6 +48,7 @@ Deno.test({
 
 Deno.test({
   name: "Download story '11689623' from FF.Net but with chapter in URL",
+  ignore: true,
   async fn() {
     const cff = new CloudflareFetcher("CloudflareFetcher-Test-Instance", 7.5);
     await cff.startBrowser();
@@ -95,6 +97,7 @@ Deno.test({
 
 Deno.test({
   name: "Download from FF.Net Sequentially With a story",
+  ignore: true,
   async fn(t) {
     const cff = new CloudflareFetcher("CloudflareFetcher-Test-Instance");
     await cff.startBrowser();

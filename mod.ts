@@ -42,7 +42,7 @@ export class CloudflareFetcher {
     let status = -1;
     try {
       if (this.cookieJar) {
-        page.setCookie(...this.cookieJar);
+        await page.setCookie(...this.cookieJar);
       }
       page.setUserAgent(this.useragent);
 

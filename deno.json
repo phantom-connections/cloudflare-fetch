@@ -1,5 +1,5 @@
 {
   "tasks": {
-    "ft": "deno test -A --unstable --coverage=cov_profile; deno coverage cov_profile --lcov --output=lcov.info; genhtml -o cov_html lcov.info"
+    "ft": "rm -rf cov_html; rm -rf cov_profile; deno test -A --unstable --coverage=cov_profile; deno coverage cov_profile --lcov --output=lcov.info; genhtml -o cov_html lcov.info"
   }
 }
