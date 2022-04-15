@@ -2,3 +2,4 @@ cov_profile
 cov_html
 lcov_cobertura.py
 coverage.xml
+lcov.info
