@@ -45,6 +45,7 @@ export class CloudflareFetcher {
         await page.setCookie(...this.cookieJar);
       }
       page.setUserAgent(this.useragent);
+      page.setCacheEnabled(false);
 
       let response: HTTPResponse | null = await page.goto(url, {
         timeout: this.timeout * 1000,
